@@ -34,7 +34,7 @@ export class UserController {
         const { password: _, ...user } = newUser
 
 
-        res.status(201).json(user)
+        return res.status(201).json(user)
 
     }
 
@@ -99,7 +99,7 @@ export class UserController {
         const { password: _, ...user } = putUser
 
 
-        res.status(201).json(user)
+        res.status(204).json()
 
     }
 }
