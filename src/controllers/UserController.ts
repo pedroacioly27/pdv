@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import { userRepository } from "../repositories/userRepository";
-import { BadRequestError } from "../helpers/api-error";
+import { BadRequestError, NotFoundError } from "../helpers/api-error";
 import bcrypt from 'bcrypt'
 import jwt from 'jsonwebtoken'
 
@@ -64,6 +64,42 @@ export class UserController {
     async getProfile(req: Request, res: Response) {
 
         return res.status(200).json(req.user)
+
+    }
+
+    async putUser(req: Request, res: Response) {
+        const { name, email, password } = req.body
+        const { id } = req.body
+
+        if (!name || !email || !password) {
+            throw new BadRequestError('Todos os campos são obrigatórios')
+        }
+
+        const userExist = await userRepository.findOneBy({ id })
+
+        const emailExist = await userRepository.findOneBy({ email })
+
+        if (!userExist) {
+            throw new NotFoundError('Usuário não encontrado')
+        }
+
+        if (emailExist && email !== userExist.email) {
+            throw new BadRequestError('Email já cadastrado')
+        }
+
+        const hashPassword = await bcrypt.hash(password, 10)
+
+        const putUser = userRepository.create({
+            name,
+            email,
+            password: hashPassword
+        })
+        await userRepository.update(userExist, putUser)
+
+        const { password: _, ...user } = putUser
+
+
+        res.status(201).json(user)
 
     }
 }
