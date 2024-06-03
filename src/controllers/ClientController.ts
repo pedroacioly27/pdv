@@ -66,4 +66,17 @@ export class ClientController {
 
         return res.status(204).json()
     }
+
+    async getClients(req: Request, res: Response) {
+        res.status(200).json(await clientRepository.find())
+    }
+
+    async getClientsById(req: Request, res: Response) {
+        const { id } = req.params
+        const client = await clientRepository.findOneBy({ id: Number(id) })
+        if (!client) {
+            throw new NotFoundError('Cliente não encontrado')
+        }
+        return res.status(200).json(client)
+    }
 }
