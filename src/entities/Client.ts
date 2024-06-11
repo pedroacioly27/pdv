@@ -1,4 +1,6 @@
-import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, PrimaryGeneratedColumn, OneToMany } from "typeorm";
+import { Order } from "./Order";
+
 
 
 @Entity('clients')
@@ -17,4 +19,8 @@ export class Client {
 
     @Column()
     cep: string
+
+    @OneToMany(() => Order, orders => orders.client)
+    orders: Order[]
+
 }
