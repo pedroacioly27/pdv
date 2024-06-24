@@ -1,5 +1,6 @@
 import { Column, Entity, PrimaryGeneratedColumn, OneToMany } from "typeorm";
 import { Order } from "./Order";
+import { IsEmail, IsNumberString } from "class-validator";
 
 
 
@@ -12,9 +13,11 @@ export class Client {
     name: string
 
     @Column({ unique: true })
+    @IsEmail()
     email: string
 
     @Column({ unique: true })
+    @IsNumberString()
     cpf: string
 
     @Column()

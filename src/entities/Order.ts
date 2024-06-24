@@ -27,20 +27,4 @@ export class Order {
     @OneToMany(() => OrderProduct, orderProduct => orderProduct.order)
     orderProduct: OrderProduct[]
 
-
-
-    // @ManyToMany(() => Product, products => products.orders)
-    // @JoinTable({
-    //     name: 'order_product',
-    //     joinColumn: {
-    //         name: 'order_id',
-    //         referencedColumnName: 'id'
-    //     },
-    //     inverseJoinColumn: {
-    //         name: 'product_id',
-    //         referencedColumnName: 'id'
-    //     }
-    // })
-    // products: Product[]
-
 }

@@ -3,6 +3,7 @@ import { userRepository } from "../repositories/userRepository";
 import { BadRequestError, NotFoundError } from "../helpers/api-error";
 import bcrypt from 'bcrypt'
 import jwt from 'jsonwebtoken'
+import { validate } from "class-validator";
 
 
 
@@ -15,7 +16,9 @@ export class UserController {
         if (!name || !email || !password) {
             throw new BadRequestError('Todos os campos são obrigatórios')
         }
-
+        if (password.length < 5) {
+            throw new BadRequestError('Senha precisa ter no mínimo 5 caracteres')
+        }
         const userExist = await userRepository.findOneBy({ email })
 
         if (userExist) {
@@ -29,6 +32,15 @@ export class UserController {
             email,
             password: hashPassword
         })
+        const errors = await validate(newUser)
+
+        if (errors.length >= 1) {
+            const newErrors = []
+            for (const error of errors) {
+                newErrors.push(error.constraints)
+            }
+            return res.status(400).json(newErrors)
+        }
         await userRepository.save(newUser)
 
         const { password: _, ...user } = newUser

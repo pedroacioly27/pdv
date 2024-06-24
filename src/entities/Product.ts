@@ -26,10 +26,5 @@ export class Product {
 
     @OneToMany(() => OrderProduct, orderProduct => orderProduct.order)
     orderProduct: OrderProduct[]
-
-
-    // @ManyToMany(() => Order, orders => orders.products)
-    // orders: Order[]
-
-
+    
 }

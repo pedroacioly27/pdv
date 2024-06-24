@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import { BadRequestError, NotFoundError } from "../helpers/api-error";
 import { clientRepository } from "../repositories/clientRepository";
+import { validate } from "class-validator";
 
 
 export class ClientController {
@@ -20,6 +21,9 @@ export class ClientController {
         if (cpfExist) {
             throw new BadRequestError('Cpf já cadastrado')
         }
+        if (cpf.length !== 11) {
+            throw new BadRequestError('CPF precisa conter 11 dígitos')
+        }
 
         const client = clientRepository.create({
             name,
@@ -27,6 +31,16 @@ export class ClientController {
             cpf,
             cep
         })
+
+        const errors = await validate(client)
+
+        if (errors.length >= 1) {
+            const newErrors = []
+            for (const error of errors) {
+                newErrors.push(error.constraints)
+            }
+            return res.status(400).json(newErrors)
+        }
 
         await clientRepository.save(client)
 

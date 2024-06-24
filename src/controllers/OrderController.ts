@@ -10,7 +10,7 @@ export class OrderController {
     async create(req: Request, res: Response) {
         const { client_id, observation, products } = req.body
 
-       
+
 
         if (!client_id) {
             throw new BadRequestError('Necessário informar o id do cliente')
@@ -106,6 +106,31 @@ export class OrderController {
     }
 
     async getOrders(req: Request, res: Response) {
+        const { client_id } = req.query
+        if (client_id) {
+            const clientOrders = []
+            const orders = await orderRepository.find({
+                relations: {
+                    orderProduct: true,
+                    client: true
+                }
+            })
+            for (const order of orders) {
+                if (order.client.id === Number(client_id)) {
+                    const { client: _, ...newOrder } = order
+                    clientOrders.push(newOrder)
+                }
+            }
+            return res.status(200).json(clientOrders)
+        }
+
+        const orders = await orderRepository.find({
+            relations: {
+                orderProduct: true
+            }
+        })
+        return res.status(200).json(orders)
 
     }
+
 }

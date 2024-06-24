@@ -29,6 +29,8 @@ routes.put('/products/:id', new ProductController().putProduct)
 routes.delete('/products/:id', new ProductController().delProduct)
 
 routes.post('/orders', new OrderController().create)
+routes.get('/orders', new OrderController().getOrders)
+
 
 
 export default routes

@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import { productRepository } from "../repositories/productRepository";
 import { BadRequestError, NotFoundError } from "../helpers/api-error";
 import { categorieRepository } from "../repositories/categorieRepository";
+import { orderProductRepository } from "../repositories/orderProductRepositosy";
 
 export class ProductController {
 
@@ -87,6 +88,11 @@ export class ProductController {
         if (!product) {
             throw new NotFoundError('Produto não encontrado')
         }
+        const foundOrder = await orderProductRepository.findOneBy({ product })
+        if (foundOrder) {
+            throw new BadRequestError('ok')
+        }
+
         await productRepository.delete(product)
 
         res.status(200).json({ message: 'Produto deletado com sucesso' })
